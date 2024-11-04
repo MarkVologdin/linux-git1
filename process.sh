@@ -5,7 +5,7 @@ DATASET="$1"
 TEMP_DIR="/home/users/MarkVologdin/linux-git1/tmp"
 
 # 1. Средний рейтинг (overall_ratingsource)
-RATING_AVG=$(awk -F',' '$18 != "-1" && $18 != "overall_ratingsource" {sum+=$18; count++} END {if (count > 0) print sum/count; else print "0"}' "$DATASET")
+RATING_AVG=$(awk -F',' '$18 != "-1.0" && $18 != "overall_ratingsource" {sum+=$18; count++} END {if (count > 0) print sum/count; else print "0"}' "$DATASET")
 echo "RATING_AVG $RATING_AVG"
 
 # 2. Число отелей в каждой стране
@@ -15,7 +15,7 @@ awk -F',' 'NR > 1 && $7 != "" {country=tolower($7); count[country]++} END {for (
 # 3. Средний балл cleanliness по стране для отелей сети Holiday Inn и Hilton
 
 awk -F',' '
-NR > 1 && $12 != "-1" && $2 ~ /(holiday inn|hilton)/ {
+NR > 1 && $12 != "-1.0" && $2 ~ /(holiday inn|hilton)/ {
     hotel = ($2 ~ /holiday inn/) ? "holidayinn" : "hilton"
     country = tolower($7)
     key = country "_" hotel
@@ -50,7 +50,7 @@ END {
 # 4. Построение линейной регрессии с использованием Gnuplot
 # Создаем временный файл для данных Gnuplot
 DATA_FILE="$TEMP_DIR/cleanliness_vs_overall.dat"
-awk -F',' '$12 != "-1" && $18 != "-1" {print $12, $18}' "$DATASET" > "$DATA_FILE"
+awk -F',' '$12 != "-1.0" && $18 != "-1.0" {print $12, $18}' "$DATASET" > "$DATA_FILE"
 
 # Создаем командный файл для Gnuplot
 PLOT_FILE="$TEMP_DIR/cleanliness_vs_overall.plot"
@@ -72,3 +72,4 @@ gnuplot "$PLOT_FILE"
 
 # Уведомление о завершении
 echo "Результаты сохранены в /tmp/cleanliness_vs_overall.png"
+
