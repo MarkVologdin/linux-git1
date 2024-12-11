@@ -1,0 +1,42 @@
+name: Weather Data Analysis
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Ежедневно в 6:00 UTC
+  workflow_dispatch:
+
+env:
+  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+
+jobs:
+  weather-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas matplotlib
+      
+      - name: Fetch Weather Data
+        run: python scripts/fetch_weather.py
+      
+      - name: Analyze Weather Trends
+        run: python scripts/analyze_weather.py
+      
+      - name: Generate Visualizations
+        run: python scripts/visualize_weather.py
+      
+      - name: Commit and Push Changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add reports/ data/
+          git commit -m "Daily Weather Data Analysis" || exit 0
+          git push
