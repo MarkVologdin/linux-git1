@@ -39,12 +39,3 @@ jobs:
       - name: Generate Visualizations
         run: python project2/scripts/visualize_weather.py  # Указываем путь к скрипту в project2/scripts/
       
-      # Шаг для коммита и пуша изменений
-      - name: Commit and Push Changes
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add reports/ data/  # Указываем пути к директориям отчетов и данных в project2
-          git commit -m "Daily Weather Data Analysis" || exit 0
-          git push
-
